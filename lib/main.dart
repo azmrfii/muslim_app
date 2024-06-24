@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:muslim_app/views/kategori/asmaul_husna/asmaul_husna_page.dart';
-// import 'package:muslim_app/views/kategori/hadits/hadits_page.dart';
-import 'package:muslim_app/views/kategori/jadwal_shalat/jadwal_shalat_page.dart';
-// import 'package:muslim_app/views/kategori/doa/doa_page.dart';
+import 'package:muslim_app/core/routes/app_routes.dart';
+import 'package:muslim_app/core/routes/on_generate_route.dart';
+import 'package:muslim_app/core/themes/app_themes.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MainApp());
 }
 
@@ -14,12 +14,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Muslim App'),
-        ),
-        body: JadwalShalatPage(),
-      ),
+      title: 'GeoTracking',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.defaultTheme,
+      onGenerateRoute: RouteGenerator.onGenerate,
+      initialRoute: AppRoutes.entryPoint,
     );
   }
 }

@@ -32,15 +32,24 @@ class DoaDataPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Arab: ${jsonData['data'][index]['arab']}',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Indo: ${jsonData['data'][index]['indo']}',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text(
                     'Judul: ${jsonData['data'][index]['judul']}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 10),
+                  Directionality( 
+                    textDirection: TextDirection.rtl,
+                    child: Text(
+                      '${jsonData['data'][index]['arab']}',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  // Text(
+                  //   '${jsonData['data'][index]['arab']}',
+                  //   style: TextStyle(fontSize: 18),
+                  // ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Artinya: "${jsonData['data'][index]['indo']}"',
                     style: TextStyle(fontSize: 18),
                   ),
                   Text(
