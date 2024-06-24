@@ -7,7 +7,7 @@ import '../constants/app_defaults.dart';
 class AppTheme {
   static ThemeData get defaultTheme {
     return ThemeData(
-      colorSchemeSeed: AppColors.primary,
+      colorSchemeSeed: Color.fromARGB(255, 92, 131, 116),
       fontFamily: "Gilroy",
       textTheme: const TextTheme(
         bodyLarge: TextStyle(color: AppColors.placeholder),

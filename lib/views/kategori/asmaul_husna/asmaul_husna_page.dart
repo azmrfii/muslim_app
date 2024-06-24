@@ -125,17 +125,17 @@ class _AsmaulHusnaPageState extends State<AsmaulHusnaPage> {
                             children: [
                               Text(
                                 '${asmaulHusna['arab']}',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(fontSize: 18, color: Colors.black),
                                 textAlign: TextAlign.center,
                               ),
                               Text(
                                 '${asmaulHusna['latin']}',
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(fontSize: 12, color: Colors.black),
                                 textAlign: TextAlign.center,
                               ),
                               Text(
                                 '${asmaulHusna['indo']}',
-                                style: TextStyle(fontSize: 10),
+                                style: TextStyle(fontSize: 10, color: Colors.black),
                                 textAlign: TextAlign.center,
                               ),
                             ],

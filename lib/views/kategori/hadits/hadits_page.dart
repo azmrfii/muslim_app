@@ -1,29 +1,38 @@
-
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:muslim_app/views/kategori/hadits/components/hadits_data_page.dart';
 
-class HaditsPage extends StatelessWidget {
+class HaditsPage extends StatefulWidget {
   const HaditsPage({super.key});
 
   @override
+  _HaditsPageState createState() => _HaditsPageState();
+}
+
+class _HaditsPageState extends State<HaditsPage> {
+  @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      childAspectRatio: 3,
-      children: [
-        HaditsTile(
-            title: 'Hadits Arbain',
-            apiUrl: 'https://api.myquran.com/v2/hadits/arbain/semua'),
-        HaditsTile(
-            title: 'Bulughul Maram',
-            apiUrl: 'https://api.myquran.com/v2/hadits/arbain/semua'),
-        HaditsTile(
-            title: 'Hadits 9 Perawi',
-            apiUrl: 'https://api.myquran.com/v2/hadits/arbain/semua'),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Hadits'),
+      ),
+      body: GridView.count(
+        crossAxisCount: 2,
+        childAspectRatio: 3,
+        children: [
+          HaditsTile(
+              title: 'Hadits Arbain',
+              apiUrl: 'https://api.myquran.com/v2/hadits/arbain/semua'),
+          HaditsTile(
+              title: 'Bulughul Maram',
+              apiUrl: 'https://api.myquran.com/v2/hadits/arbain/semua'),
+          HaditsTile(
+              title: 'Hadits 9 Perawi',
+              apiUrl: 'https://api.myquran.com/v2/hadits/arbain/semua'),
+        ],
+      ),
     );
   }
 }

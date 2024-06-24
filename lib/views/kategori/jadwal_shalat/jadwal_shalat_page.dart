@@ -14,7 +14,7 @@ class JadwalShalatPage extends StatefulWidget {
 
 class _JadwalShalatPageState extends State<JadwalShalatPage> {
   Map<String, dynamic>? jadwalShalat;
-  String _backgroundImage = 'assets/images/shubuh.png';
+  String _backgroundImage = 'assets/images/isya.png';
   List<dynamic> _kota = [];
   String? _selectedKota = '1301';
 
@@ -25,7 +25,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
       final jsonData = jsonDecode(response.body);
       setState(() {
         _kota = jsonData['data'];
-        print(_kota);
       });
     } else {
       throw Exception('Error Lokasi');
@@ -42,7 +41,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
     final day = now.day;
 
     final response = await http.get(Uri.parse(
-        // 'https://api.myquran.com/v2/sholat/jadwal/1204/$year/$month/$day'));
         'https://api.myquran.com/v2/sholat/jadwal/${_selectedKota}/$year/$month/$day'));
 
     if (response.statusCode == 200) {
@@ -68,16 +66,14 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
     final hour = now.hour;
     final minute = now.minute;
 
-    if (hour == 11 && minute >= 0) {
+    if (hour >= 3 && hour < 6) {
+      _backgroundImage = 'assets/images/shubuh.png';
+    } else if (hour >= 6 && hour < 17) {
       _backgroundImage = 'assets/images/dzuhur.png';
-    } else if (hour == 17 && minute >= 0) {
-      _backgroundImage = 'assets/images/maghrib.png';
-    } else if (hour == 18 && minute >= 0) {
-      _backgroundImage = 'assets/images/isya.png';
-    } else if (hour == 4 && minute >= 0) {
-      _backgroundImage = 'assets/images/shubuh.png';
+    } else if (hour >= 17 && (hour < 18 || (hour == 18 && minute < 30))) {
+      _backgroundImage = 'assets/images/magrib.png';
     } else {
-      _backgroundImage = 'assets/images/shubuh.png';
+      _backgroundImage = 'assets/images/isya.png';
     }
     setState(() {});
   }
@@ -86,9 +82,9 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: SizedBox(
           width: 200,
-          // height: 300,
           child: DropdownButton(
             isExpanded: true,
             value: _selectedKota,

@@ -43,7 +43,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 icon: SvgPicture.asset(
                   'assets/icons/home.svg',
                   color: widget.selectedIndex == 0
-                      ? Color.fromARGB(255, 113, 201, 206)
+                      ? Color.fromARGB(255, 92, 131, 116)
                       : Colors.black.withOpacity(unselectedIconColorOpacity),
                   width: 30,
                   height: 30,
@@ -54,7 +54,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 icon: SvgPicture.asset(
                   'assets/icons/bedug.svg',
                   color: widget.selectedIndex == 1
-                      ? Color.fromARGB(255, 113, 201, 206)
+                      ? Color.fromARGB(255, 92, 131, 116)
                       : Colors.black.withOpacity(unselectedIconColorOpacity),
                   width: 30,
                   height: 30,
@@ -65,7 +65,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 icon: SvgPicture.asset(
                   'assets/icons/kabah.svg',
                   color: widget.selectedIndex == 2
-                      ? Color.fromARGB(255, 113, 201, 206)
+                      ? Color.fromARGB(255, 92, 131, 116)
                       : Colors.black.withOpacity(unselectedIconColorOpacity),
                   width: 30,
                   height: 30,
@@ -76,7 +76,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 icon: SvgPicture.asset(
                   'assets/icons/profile.svg',
                   color: widget.selectedIndex == 3
-                      ? Color.fromARGB(255, 113, 201, 206)
+                      ? Color.fromARGB(255, 92, 131, 116)
                       : Colors.black.withOpacity(unselectedIconColorOpacity),
                   width: 30,
                   height: 30,

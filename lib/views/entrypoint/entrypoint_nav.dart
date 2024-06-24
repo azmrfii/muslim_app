@@ -57,8 +57,10 @@ class BottomGradientWidget extends StatelessWidget {
         height: 150,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-          Color(0xFF107873).withOpacity(0.2),
-          Color(0xFF107873).withOpacity(0)
+          // Color(0xFF107873).withOpacity(0.2),
+          // Color(0xFF107873).withOpacity(0)
+          Color.fromARGB(255, 92, 131, 116).withOpacity(0.2),
+          Color.fromARGB(255, 147, 177, 166).withOpacity(0),
         ], begin: Alignment.bottomCenter, end: Alignment.topCenter)),
       ),
     );
