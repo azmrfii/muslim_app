@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, unused_local_variable
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, unused_local_variable, unnecessary_brace_in_string_interps
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -15,6 +15,22 @@ class JadwalShalatPage extends StatefulWidget {
 class _JadwalShalatPageState extends State<JadwalShalatPage> {
   Map<String, dynamic>? jadwalShalat;
   String _backgroundImage = 'assets/images/shubuh.png';
+  List<dynamic> _kota = [];
+  String? _selectedKota = '1301';
+
+  Future<void> fetchKota() async {
+    final response = await http
+        .get(Uri.parse('https://api.myquran.com/v2/sholat/kota/semua'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      setState(() {
+        _kota = jsonData['data'];
+        print(_kota);
+      });
+    } else {
+      throw Exception('Error Lokasi');
+    }
+  }
 
   Future<void> fetchjadwalShalat() async {
     final now = DateTime.now();
@@ -26,10 +42,8 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
     final day = now.day;
 
     final response = await http.get(Uri.parse(
-        'https://api.myquran.com/v2/sholat/jadwal/1204/$year/$month/$day'));
-
-    // final response = await http.get(
-    //     Uri.parse('https://api.myquran.com/v2/sholat/jadwal/1204/2024/04/23'));
+        // 'https://api.myquran.com/v2/sholat/jadwal/1204/$year/$month/$day'));
+        'https://api.myquran.com/v2/sholat/jadwal/${_selectedKota}/$year/$month/$day'));
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
@@ -45,6 +59,7 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
   void initState() {
     super.initState();
     fetchjadwalShalat();
+    fetchKota();
     _setBackgroundImage();
   }
 
@@ -70,12 +85,34 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: SizedBox(
+          width: 200,
+          // height: 300,
+          child: DropdownButton(
+            isExpanded: true,
+            value: _selectedKota,
+            onChanged: (value) {
+              setState(() {
+                _selectedKota = value as String?;
+                fetchjadwalShalat();
+              });
+            },
+            items: _kota.map((kota) {
+              return DropdownMenuItem(
+                value: kota['id'].toString(),
+                child: Text(kota['lokasi']),
+              );
+            }).toList(),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+      ),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(_backgroundImage),
-            // image: AssetImage('assets/images/dzuhur.png'),
             fit: BoxFit.cover,
             alignment: Alignment.center,
           ),
