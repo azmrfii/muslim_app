@@ -1,9 +1,11 @@
-// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, unused_local_variable, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api, unused_local_variable, unnecessary_brace_in_string_interps, unused_field
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class JadwalShalatPage extends StatefulWidget {
   const JadwalShalatPage({super.key});
@@ -15,23 +17,45 @@ class JadwalShalatPage extends StatefulWidget {
 class _JadwalShalatPageState extends State<JadwalShalatPage> {
   Map<String, dynamic>? jadwalShalat;
   String _backgroundImage = 'assets/images/isya.png';
-  List<dynamic> _kota = [];
-  String? _selectedKota = '1301';
+  String? _selectedKota;
+  Timer? _timer;
+  String _currentTime = '';
 
-  Future<void> fetchKota() async {
-    final response = await http
-        .get(Uri.parse('https://api.myquran.com/v2/sholat/kota/semua'));
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
+  @override
+  void initState() {
+    super.initState();
+    fetchjadwalShalat();
+    _setBackgroundImage();
+    _updateTime();
+    _loadSelectedKota();
+  }
+
+  Future<void> _loadSelectedKota() async {
+    final prefs = await SharedPreferences.getInstance();
+    final selectedKota = prefs.getString('selectedKota');
+    if (selectedKota != null) {
       setState(() {
-        _kota = jsonData['data'];
+        _selectedKota = selectedKota;
       });
     } else {
-      throw Exception('Error Lokasi');
+      setState(() {
+        _selectedKota = '1301'; // default kota jakarta
+      });
     }
   }
 
+  void _updateTime() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _currentTime =
+            '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}';
+      });
+    });
+  }
+
   Future<void> fetchjadwalShalat() async {
+    await _loadSelectedKota();
+
     final now = DateTime.now();
     final formatter = DateFormat('yyyy/MM/dd');
     final formattedDate = formatter.format(now);
@@ -51,14 +75,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
     } else {
       throw Exception('Error Jadwal Shalat');
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchjadwalShalat();
-    fetchKota();
-    _setBackgroundImage();
   }
 
   void _setBackgroundImage() {
@@ -81,29 +97,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: SizedBox(
-          width: 200,
-          child: DropdownButton(
-            isExpanded: true,
-            value: _selectedKota,
-            onChanged: (value) {
-              setState(() {
-                _selectedKota = value as String?;
-                fetchjadwalShalat();
-              });
-            },
-            items: _kota.map((kota) {
-              return DropdownMenuItem(
-                value: kota['id'].toString(),
-                child: Text(kota['lokasi']),
-              );
-            }).toList(),
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-      ),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
@@ -115,6 +108,39 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
         ),
         child: Column(
           children: [
+            Expanded(
+              child: Container(),
+            ),
+            Text(
+              jadwalShalat != null ? jadwalShalat!['lokasi'] : '',
+              style: TextStyle(
+                fontSize: 28,
+                fontFamily: 'OpenSans',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    offset: Offset(3, 2),
+                    blurRadius: 2,
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              _currentTime,
+              style: TextStyle(
+                fontSize: 24,
+                fontFamily: 'OpenSans',
+                color: Colors.black,
+              ),
+            ),
+            Expanded(
+              child: Container(),
+            ),
+            Expanded(
+              child: Container(),
+            ),
             Expanded(
               child: Container(),
             ),

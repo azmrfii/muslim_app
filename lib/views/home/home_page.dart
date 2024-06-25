@@ -1,13 +1,15 @@
-// ignore_for_file: unused_field, avoid_unnecessary_containers, prefer_const_constructors, unnecessary_string_interpolations, prefer_const_literals_to_create_immutables
+// ignore_for_file: unused_field, avoid_unnecessary_containers, prefer_const_constructors, unnecessary_string_interpolations, prefer_const_literals_to_create_immutables, deprecated_member_use, unnecessary_cast
 
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:muslim_app/views/kategori/categories_page.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic>? _kalenderHijriah;
   Timer? _timer;
   String _currentTime = '';
+  List<dynamic> _kota = [];
+  String? _selectedKota;
 
   @override
   void initState() {
@@ -28,12 +32,33 @@ class _HomePageState extends State<HomePage> {
     _setBackgroundImage();
     fetchKalenderHijriah();
     _updateTime();
+    fetchKota();
+    _loadSelectedKota();
   }
 
   @override
   void dispose() {
     _timer!.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadSelectedKota() async {
+    final prefs = await SharedPreferences.getInstance();
+    final selectedKota = prefs.getString('selectedKota');
+    if (selectedKota != null) {
+      setState(() {
+        _selectedKota = selectedKota;
+      });
+    } else {
+      setState(() {
+        _selectedKota = '1301'; // default kota jakarta
+      });
+    }
+  }
+
+  Future<void> _saveSelectedKota(String kotaId) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('selectedKota', kotaId);
   }
 
   void _updateTime() {
@@ -75,6 +100,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> fetchKota() async {
+    final response = await http
+        .get(Uri.parse('https://api.myquran.com/v2/sholat/kota/semua'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      setState(() {
+        _kota = jsonData['data'];
+      });
+    } else {
+      throw Exception('Error Lokasi');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,10 +124,62 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 80,
+                    height: 50,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text(
+                              'Lokasi',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            color: Colors.transparent,
+                            margin: EdgeInsets.only(left: 15),
+                            width: MediaQuery.of(context).size.width / 2.8,
+                            child: DropdownButton(
+                              value: _selectedKota,
+                              onChanged: (value) async {
+                                setState(() {
+                                  _selectedKota = value as String?;
+                                });
+                                await _saveSelectedKota(value as String);
+                              },
+                              items: _kota.map((kota) {
+                                return DropdownMenuItem(
+                                  value: kota['id'].toString(),
+                                  child: Text(kota['lokasi']),
+                                );
+                              }).toList(),
+                              isExpanded: true,
+                              menuMaxHeight: 250,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        icon: SvgPicture.asset(
+                          'assets/icons/setting.svg',
+                          color: Color.fromARGB(255, 92, 131, 116),
+                          width: 30,
+                          height: 30,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.only(
+                        left: 15, right: 15, bottom: 15, top: 10),
                     child: Container(
                       width: constraints.maxWidth,
                       padding: const EdgeInsets.all(15),
