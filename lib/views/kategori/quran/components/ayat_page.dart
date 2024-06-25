@@ -31,7 +31,7 @@ class _AyatPageState extends State<AyatPage> {
 
   Future<void> _fetchAyatList() async {
     final response = await http.get(Uri.parse(
-        'https://api.myquran.com/v2/quran/ayat/${widget.suratNumber}/1/${widget.panjangAyat}'));
+        'https://api.myquran.com/v2/quran/ayat/${widget.suratNumber}/1-${widget.panjangAyat}'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       setState(() {
@@ -58,23 +58,22 @@ class _AyatPageState extends State<AyatPage> {
                 return Card(
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            ayat['ayah'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            ayat['arab'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ],
+                      SizedBox(height: 8),
+                      Text(
+                        ayat['ayah'],
+                        style: TextStyle(fontSize: 14),
                       ),
+                      SizedBox(height: 8),
+                      Text(
+                        ayat['arab'],
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 8),
                       Text(
                         ayat['latin'],
                         style: TextStyle(fontSize: 14),
                       ),
+                      SizedBox(height: 8),
                       Text(
                         ayat['text'],
                         style: TextStyle(fontSize: 16),

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:muslim_app/views/kategori/quran/components/ayat_juz_page.dart';
+
 class JuzPage extends StatefulWidget {
   const JuzPage({super.key});
 
@@ -80,39 +82,90 @@ class _JuzPageState extends State<JuzPage> {
                             .toLowerCase()
                             .contains(_searchQuery.toLowerCase()))
                         .elementAt(index);
-                    return Column(
-                      children: [
-                        ListTile(
-                          leading: Text(
-                            surat['number'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AyatJuzPage(
+                              juzNumber: int.parse(surat['number']),
                             ),
                           ),
-                          title: Text(
-                            surat['name'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Text(
+                              surat['number'],
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            title: Text(
+                              surat['name'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'Di Mulai di: ' +
+                                  surat['name_start_id'] +
+                                  ' Ayat ' +
+                                  surat['verse_start'],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black54,
+                              ),
                             ),
                           ),
-                          subtitle: Text(
-                            'Di Mulai di: ' + surat['name_start_id'] + ' Ayat ' + surat['verse_start'],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
+                          Divider(
+                            thickness: 1,
+                            color: Colors.grey,
+                            indent: 16,
+                            endIndent: 16,
                           ),
-                        ),
-                        Divider(
-                          thickness: 1,
-                          color: Colors.grey,
-                          indent: 16,
-                          endIndent: 16,
-                        ),
-                      ],
+                        ],
+                      ),
                     );
+                    // return Column(
+                    //   children: [
+                    //     ListTile(
+                    //       leading: Text(
+                    //         surat['number'],
+                    //         style: TextStyle(
+                    //           fontSize: 14,
+                    //           color: Colors.black54,
+                    //         ),
+                    //       ),
+                    //       title: Text(
+                    //         surat['name'],
+                    //         style: TextStyle(
+                    //           fontSize: 16,
+                    //           color: Colors.black,
+                    //         ),
+                    //       ),
+                    //       subtitle: Text(
+                    //         'Di Mulai di: ' +
+                    //             surat['name_start_id'] +
+                    //             ' Ayat ' +
+                    //             surat['verse_start'],
+                    //         style: TextStyle(
+                    //           fontSize: 12,
+                    //           color: Colors.black54,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Divider(
+                    //       thickness: 1,
+                    //       color: Colors.grey,
+                    //       indent: 16,
+                    //       endIndent: 16,
+                    //     ),
+                    //   ],
+                    // );
                   },
                 ),
         ],
