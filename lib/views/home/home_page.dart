@@ -1,5 +1,6 @@
 // ignore_for_file: unused_field, avoid_unnecessary_containers, prefer_const_constructors, unnecessary_string_interpolations, prefer_const_literals_to_create_immutables
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -17,11 +18,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _backgroundImage = '';
+  Map<String, dynamic>? _kalenderHijriah;
+  Timer? _timer;
+  String _currentTime = '';
 
   @override
   void initState() {
     super.initState();
     _setBackgroundImage();
+    fetchKalenderHijriah();
+    _updateTime();
+  }
+
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
+  }
+
+  void _updateTime() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _currentTime =
+            '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}';
+      });
+    });
   }
 
   void _setBackgroundImage() {
@@ -39,6 +60,19 @@ class _HomePageState extends State<HomePage> {
       _backgroundImage = 'assets/images/isya_crop.png';
     }
     setState(() {});
+  }
+
+  Future<void> fetchKalenderHijriah() async {
+    final response =
+        await http.get(Uri.parse('https://api.myquran.com/v2/cal/hijr'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      setState(() {
+        _kalenderHijriah = jsonData['data'];
+      });
+    } else {
+      throw Exception('Error Kalender');
+    }
   }
 
   @override
@@ -87,31 +121,60 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            'Jadwal Shalat Berikutnya',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'test:',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
+                          _kalenderHijriah != null
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${_kalenderHijriah!['date'][0]}, ${_kalenderHijriah!['date'][1]}',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(1, 1),
+                                            blurRadius: 2,
+                                            color: Colors.black45,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      DateFormat.yMMMMd()
+                                          .format(DateTime.now()),
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(1, 1),
+                                            blurRadius: 2,
+                                            color: Colors.black45,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Text('Loading...'),
                           Spacer(),
                           Expanded(
                             child: Text(
-                              '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}',
+                              _currentTime,
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1, 1),
+                                    blurRadius: 2,
+                                    color: Colors.black45,
+                                  ),
+                                ],
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),

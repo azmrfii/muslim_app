@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:muslim_app/views/entrypoint/entrypoint_nav.dart';
 import 'package:muslim_app/views/kategori/asmaul_husna/asmaul_husna_page.dart';
 import 'package:muslim_app/views/kategori/doa/doa_page.dart';
 import 'package:muslim_app/views/kategori/hadits/hadits_page.dart';
+import 'package:muslim_app/views/kategori/quran/quran_page.dart';
 
 class Categories extends StatelessWidget {
   @override
@@ -20,7 +20,7 @@ class Categories extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EntryPointNav()),
+                MaterialPageRoute(builder: (context) => AlQuranPage()),
               );
             },
           ),
@@ -45,7 +45,6 @@ class Categories extends StatelessWidget {
           CategoryBox(
             svgAsset: 'assets/icons/more.svg',
             onPressed: () {
-              // TODO: implement Quran page
               _showBottomSheet(context);
             },
           ),
@@ -67,7 +66,7 @@ class Categories extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EntryPointNav()),
+                  MaterialPageRoute(builder: (context) => AlQuranPage()),
                 );
               },
             ),
@@ -109,7 +108,7 @@ class CategoryBox extends StatelessWidget {
   final String svgAsset;
   final VoidCallback onPressed;
 
-  CategoryBox({required this.svgAsset, required this.onPressed});
+  const CategoryBox({required this.svgAsset, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

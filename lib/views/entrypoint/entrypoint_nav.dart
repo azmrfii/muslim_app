@@ -35,7 +35,8 @@ class _EntryPointNavState extends State<EntryPointNav> {
           [
             HomePage(),
             JadwalShalatPage(),
-            KiblatCompassPage(),
+            // KiblatCompassPage(),
+            HomePage(),
             HomePage(),
           ][_selectedIndex],
           BottomGradientWidget(),
