@@ -30,6 +30,15 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
     _loadSelectedKota();
   }
 
+  void _updateTime() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _currentTime =
+            '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}';
+      });
+    });
+  }
+
   Future<void> _loadSelectedKota() async {
     final prefs = await SharedPreferences.getInstance();
     final selectedKota = prefs.getString('selectedKota');
@@ -42,15 +51,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
         _selectedKota = '1301'; // default kota jakarta
       });
     }
-  }
-
-  void _updateTime() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        _currentTime =
-            '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}';
-      });
-    });
   }
 
   Future<void> fetchjadwalShalat() async {
@@ -98,6 +98,10 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text('Back'),
+        backgroundColor: Colors.transparent,
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -118,13 +122,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                 fontFamily: 'OpenSans',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
-                shadows: [
-                  Shadow(
-                    offset: Offset(3, 2),
-                    blurRadius: 2,
-                    color: Colors.black54,
-                  ),
-                ],
               ),
             ),
             Text(
@@ -170,18 +167,24 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontFamily: 'OpenSans',
+                                    color: Colors.black.withOpacity(0.6),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['imsak'],
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontFamily: 'OpenSans',
+                                        color: Colors.black.withOpacity(0.6),
                                       ),
                                     ),
                                   ],
@@ -197,16 +200,22 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontFamily: 'OpenSans',
+                                    color: Colors.black.withOpacity(0.6),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['subuh'],
                                       style: TextStyle(
+                                        color: Colors.black.withOpacity(0.6),
                                         fontSize: 18,
                                         fontFamily: 'OpenSans',
                                       ),
@@ -223,17 +232,23 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   'Terbit',
                                   style: TextStyle(
                                     fontSize: 18,
+                                    color: Colors.black.withOpacity(0.6),
                                     fontFamily: 'OpenSans',
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['terbit'],
                                       style: TextStyle(
+                                        color: Colors.black.withOpacity(0.6),
                                         fontSize: 18,
                                         fontFamily: 'OpenSans',
                                       ),
@@ -250,17 +265,23 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   'Dhuha',
                                   style: TextStyle(
                                     fontSize: 18,
+                                    color: Colors.black.withOpacity(0.6),
                                     fontFamily: 'OpenSans',
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['dhuha'],
                                       style: TextStyle(
+                                        color: Colors.black.withOpacity(0.6),
                                         fontSize: 18,
                                         fontFamily: 'OpenSans',
                                       ),
@@ -276,6 +297,7 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                 Text(
                                   'Dzuhur',
                                   style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6),
                                     fontSize: 18,
                                     fontFamily: 'OpenSans',
                                     fontWeight: FontWeight.bold,
@@ -283,12 +305,17 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['dzuhur'],
                                       style: TextStyle(
                                         fontSize: 18,
+                                        color: Colors.black.withOpacity(0.6),
                                         fontFamily: 'OpenSans',
                                       ),
                                     ),
@@ -304,17 +331,23 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   'Ashar',
                                   style: TextStyle(
                                     fontSize: 18,
+                                    color: Colors.black.withOpacity(0.6),
                                     fontFamily: 'OpenSans',
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['ashar'],
                                       style: TextStyle(
+                                        color: Colors.black.withOpacity(0.6),
                                         fontSize: 18,
                                         fontFamily: 'OpenSans',
                                       ),
@@ -332,17 +365,23 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontFamily: 'OpenSans',
+                                    color: Colors.black.withOpacity(0.6),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['maghrib'],
                                       style: TextStyle(
                                         fontSize: 18,
+                                        color: Colors.black.withOpacity(0.6),
                                         fontFamily: 'OpenSans',
                                       ),
                                     ),
@@ -358,17 +397,23 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                   'Isya',
                                   style: TextStyle(
                                     fontSize: 18,
+                                    color: Colors.black.withOpacity(0.6),
                                     fontFamily: 'OpenSans',
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.access_time, size: 18),
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 18,
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
                                     SizedBox(width: 5),
                                     Text(
                                       jadwalShalat!['jadwal']['isya'],
                                       style: TextStyle(
+                                        color: Colors.black.withOpacity(0.6),
                                         fontSize: 18,
                                         fontFamily: 'OpenSans',
                                       ),
@@ -377,7 +422,6 @@ class _JadwalShalatPageState extends State<JadwalShalatPage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 100),
                           ],
                         ),
                       ),

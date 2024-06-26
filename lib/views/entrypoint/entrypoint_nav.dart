@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:muslim_app/views/entrypoint/components/custom_button_app_navigation.dart';
 import 'package:muslim_app/views/home/home_page.dart';
-import 'package:muslim_app/views/kategori/jadwal_shalat/jadwal_shalat_page.dart';
+import 'package:muslim_app/views/kategori/jadwal_shalat/components/jadwal_shalat_bulanan_page.dart';
+// import 'package:muslim_app/views/kategori/jadwal_shalat/jadwal_shalat_page.dart';
 import 'package:muslim_app/views/kategori/kiblat/kiblat_page.dart';
 
 class EntryPointNav extends StatefulWidget {
@@ -34,9 +35,10 @@ class _EntryPointNavState extends State<EntryPointNav> {
         children: [
           [
             HomePage(),
-            JadwalShalatPage(),
-            // KiblatCompassPage(),
-            HomePage(),
+            // JadwalShalatPage(),
+            JadwalShalatBulananPage(),
+            KiblatCompassPage(),
+            // HomePage(),
             HomePage(),
           ][_selectedIndex],
           BottomGradientWidget(),

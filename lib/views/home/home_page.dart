@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field, avoid_unnecessary_containers, prefer_const_constructors, unnecessary_string_interpolations, prefer_const_literals_to_create_immutables, deprecated_member_use, unnecessary_cast
+// ignore_for_file: unused_field, avoid_unnecessary_containers, prefer_const_constructors, unnecessary_string_interpolations, prefer_const_literals_to_create_immutables, deprecated_member_use, unnecessary_cast, unused_local_variable
 
 import 'dart:async';
 import 'dart:convert';
@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:muslim_app/views/kategori/categories_page.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:muslim_app/views/kategori/jadwal_shalat/jadwal_shalat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _backgroundImage = '';
+  Map<String, dynamic>? jadwalShalat;
   Map<String, dynamic>? _kalenderHijriah;
   Timer? _timer;
   String _currentTime = '';
@@ -29,10 +31,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _setBackgroundImage();
     fetchKalenderHijriah();
-    _updateTime();
     fetchKota();
+    fetchjadwalShalat();
+    _setBackgroundImage();
+    _updateTime();
     _loadSelectedKota();
   }
 
@@ -87,6 +90,46 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  String _getCurrentPrayerText() {
+    if (jadwalShalat == null) {
+      return 'Loading...';
+    }
+    
+    final currentTime = TimeOfDay.now();
+    final prayerTimes = jadwalShalat!['jadwal'];
+
+    final subuhTime = _parseTime(prayerTimes['subuh']);
+    final dzuhurTime = _parseTime(prayerTimes['dzuhur']);
+    final asharTime = _parseTime(prayerTimes['ashar']);
+    final maghribTime = _parseTime(prayerTimes['maghrib']);
+    final isyaTime = _parseTime(prayerTimes['isya']);
+
+    if (currentTime.hour < subuhTime.hour ||
+        (currentTime.hour == subuhTime.hour &&
+            currentTime.minute < subuhTime.minute)) {
+      return 'Menuju Subuh';
+    } else if (currentTime.hour < dzuhurTime.hour ||
+        (currentTime.hour == dzuhurTime.hour &&
+            currentTime.minute < dzuhurTime.minute)) {
+      return 'Menuju Dzuhur';
+    } else if (currentTime.hour < asharTime.hour ||
+        (currentTime.hour == asharTime.hour &&
+            currentTime.minute < asharTime.minute)) {
+      return 'Menuju Ashar';
+    } else if (currentTime.hour < maghribTime.hour ||
+        (currentTime.hour == maghribTime.hour &&
+            currentTime.minute < maghribTime.minute)) {
+      return 'Menuju Maghrib';
+    } else {
+      return 'Menuju Isya';
+    }
+  }
+
+  TimeOfDay _parseTime(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
   Future<void> fetchKalenderHijriah() async {
     final response =
         await http.get(Uri.parse('https://api.myquran.com/v2/cal/hijr'));
@@ -113,6 +156,30 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> fetchjadwalShalat() async {
+    await _loadSelectedKota();
+
+    final now = DateTime.now();
+    final formatter = DateFormat('yyyy/MM/dd');
+    final formattedDate = formatter.format(now);
+
+    final year = now.year;
+    final month = now.month;
+    final day = now.day;
+
+    final response = await http.get(Uri.parse(
+        'https://api.myquran.com/v2/sholat/jadwal/${_selectedKota}/$year/$month/$day'));
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      setState(() {
+        jadwalShalat = jsonData['data'];
+      });
+    } else {
+      throw Exception('Error Jadwal Shalat');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +191,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 50,
+                    height: 30,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,6 +220,7 @@ class _HomePageState extends State<HomePage> {
                                   _selectedKota = value as String?;
                                 });
                                 await _saveSelectedKota(value as String);
+                                fetchjadwalShalat();
                               },
                               items: _kota.map((kota) {
                                 return DropdownMenuItem(
@@ -183,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                       width: constraints.maxWidth,
                       padding: const EdgeInsets.all(15),
-                      height: 150,
+                      height: 210,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(_backgroundImage),
@@ -212,59 +280,206 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           _kalenderHijriah != null
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       '${_kalenderHijriah!['date'][0]}, ${_kalenderHijriah!['date'][1]}',
                                       style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
                                         color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                            offset: Offset(1, 1),
-                                            blurRadius: 2,
-                                            color: Colors.black45,
-                                          ),
-                                        ],
                                       ),
                                     ),
                                     Text(
-                                      DateFormat.yMMMMd()
+                                      DateFormat('dd MMM y')
                                           .format(DateTime.now()),
                                       style: TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 14,
                                         color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                            offset: Offset(1, 1),
-                                            blurRadius: 2,
-                                            color: Colors.black45,
-                                          ),
-                                        ],
                                       ),
                                     ),
                                   ],
                                 )
                               : Text('Loading...'),
-                          Spacer(),
-                          Expanded(
-                            child: Text(
-                              _currentTime,
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    offset: Offset(1, 1),
-                                    blurRadius: 2,
-                                    color: Colors.black45,
+                          SizedBox(height: 7),
+                          Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  _currentTime,
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
+                                ),
+                                // SizedBox(height: 2),
+                                Text(
+                                  _getCurrentPrayerText(),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          jadwalShalat == null
+                              ? Center(child: CircularProgressIndicator())
+                              : SingleChildScrollView(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, right: 5, top: 15),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      JadwalShalatPage()),
+                                            );
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: const EdgeInsets.all(10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Subuh',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      jadwalShalat!['jadwal']
+                                                          ['subuh'],
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Dzuhur',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      jadwalShalat!['jadwal']
+                                                          ['dzuhur'],
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Ashar',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      jadwalShalat!['jadwal']
+                                                          ['ashar'],
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Maghrib',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      jadwalShalat!['jadwal']
+                                                          ['maghrib'],
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Isya',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      jadwalShalat!['jadwal']
+                                                          ['isya'],
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'OpenSans',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                         ],
                       ),
                     ),
